@@ -35,3 +35,5 @@ In same directory start http server on 8080 port with command 'http-server'
 ### 
 
 Once http server has started go to the browser and hit url 'http://localhost:8080/'.
+
+### this application will face core policy  network restriction issue for which required seup proxy 
