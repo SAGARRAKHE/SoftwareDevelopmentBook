@@ -80,7 +80,7 @@ class Index extends React.Component {
   }
 }
 let cartItems = {}
-const totalAmount = 2
+let totalAmount = 2
 const addToCart = (id) => {
   if (cartItems[id])
     cartItems[id] += 1
@@ -92,15 +92,33 @@ const getTotalAmount = (cartItems) => {
   const itemQuantityArrayString =  Object.keys(cartItems).map((item) => cartItems[item]).join(',')
   const itemQuantityArray = itemQuantityArrayString.split(',')
   const requestOptions = {
-    mode: 'no-cors',
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
+   method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+                   'accept': 'application/json',
+                   'Access-Control-Allow-Origin': 'https://localhost:8080' },
+    
     body: itemQuantityArrayString
   };
   console.log("parameters:"+ itemQuantityArrayString)
-  const response =  fetch('http://localhost:8081/eBookCart/getInvoice', requestOptions);
-    console.log("response"+response)
-}
+  fetch('http://localhost:8081/eBookCart/getInvoice', requestOptions)
+   .then(function(response) {
+    console.log(response.status); 
+    if (!response.ok) {
+        throw new Error("HTTP status " + response.status);
+    }
+    return response.json();
+   })
+   .then((data) => {
+      totalAmount = data;
+      console.log("data "+data);
+   })
+   .catch((err) => {
+    if (err){
+      console.log("error: "+ err.message);
+    }
+   });
+};
+
 
 ReactDOM.render((
   <Router history={hashHistory}>

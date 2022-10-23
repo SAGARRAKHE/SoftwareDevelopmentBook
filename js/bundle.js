@@ -13893,14 +13893,28 @@ var getTotalAmount = function getTotalAmount(cartItems) {
   }).join(',');
   var itemQuantityArray = itemQuantityArrayString.split(',');
   var requestOptions = {
-    mode: 'no-cors',
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
+    headers: { 'Content-Type': 'application/json',
+      'accept': 'application/json',
+      'Access-Control-Allow-Origin': 'https://localhost:8080' },
+
     body: itemQuantityArrayString
   };
   console.log("parameters:" + itemQuantityArrayString);
-  var response = fetch('http://localhost:8081/eBookCart/getInvoice', requestOptions);
-  console.log("response" + response);
+  fetch('http://localhost:8081/eBookCart/getInvoice', requestOptions).then(function (response) {
+    console.log(response.status);
+    if (!response.ok) {
+      throw new Error("HTTP status " + response.status);
+    }
+    return response.json();
+  }).then(function (data) {
+    totalAmount = data;
+    console.log("data " + data);
+  }).catch(function (err) {
+    if (err) {
+      console.log("error: " + err.message);
+    }
+  });
 };
 
 ReactDOM.render(React.createElement(
