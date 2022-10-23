@@ -13434,13 +13434,21 @@ var _require = __webpack_require__(29),
 var Cart = function (_React$Component) {
   _inherits(Cart, _React$Component);
 
-  function Cart() {
+  function Cart(props) {
     _classCallCheck(this, Cart);
 
-    return _possibleConstructorReturn(this, (Cart.__proto__ || Object.getPrototypeOf(Cart)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Cart.__proto__ || Object.getPrototypeOf(Cart)).call(this, props));
+
+    _this.getInvoice = _this.getInvoice.bind(_this);
+    return _this;
   }
 
   _createClass(Cart, [{
+    key: 'getInvoice',
+    value: function getInvoice(event) {
+      this.props.route.getTotalAmount(this.props.route.cartItems);
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -13468,7 +13476,9 @@ var Cart = function (_React$Component) {
         ),
         React.createElement(
           Link,
-          { to: '/checkout', className: 'btn btn-primary' },
+          { to: '/checkout',
+            onClick: this.getInvoice,
+            className: 'btn btn-primary' },
           'Checkout'
         ),
         React.createElement(
@@ -13567,8 +13577,8 @@ var Checkout = function (_React$Component) {
         React.createElement(
           'p',
           null,
-          'Total: ',
-          0
+          'Total Amount: ',
+          this.props.route.totalAmount
         )
       );
     }
@@ -13801,7 +13811,6 @@ var App = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      console.log('Modal: ', this.isModal);
       return React.createElement(
         'div',
         { className: 'well' },
@@ -13873,8 +13882,25 @@ var Index = function (_React$Component2) {
 }(React.Component);
 
 var cartItems = {};
+var totalAmount = 2;
 var addToCart = function addToCart(id) {
   if (cartItems[id]) cartItems[id] += 1;else cartItems[id] = 1;
+};
+
+var getTotalAmount = function getTotalAmount(cartItems) {
+  var itemQuantityArrayString = Object.keys(cartItems).map(function (item) {
+    return cartItems[item];
+  }).join(',');
+  var itemQuantityArray = itemQuantityArrayString.split(',');
+  var requestOptions = {
+    mode: 'no-cors',
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: itemQuantityArrayString
+  };
+  console.log("parameters:" + itemQuantityArrayString);
+  var response = fetch('http://localhost:8081/eBookCart/getInvoice', requestOptions);
+  console.log("response" + response);
 };
 
 ReactDOM.render(React.createElement(
@@ -13888,9 +13914,11 @@ ReactDOM.render(React.createElement(
       addToCart: addToCart,
       products: PRODUCTS }),
     React.createElement(Route, { path: '/cart', component: Cart,
+      getTotalAmount: getTotalAmount,
       cartItems: cartItems, products: PRODUCTS })
   ),
   React.createElement(Route, { path: '/checkout', component: Checkout,
+    totalAmount: totalAmount,
     cartItems: cartItems, products: PRODUCTS })
 ), document.getElementById('content'));
 

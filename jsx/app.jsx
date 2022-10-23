@@ -40,7 +40,6 @@ class App extends React.Component {
     }
   }
   render() {
-    console.log('Modal: ', this.isModal)
     return (
       <div className="well">
         <Heading/>
@@ -81,11 +80,26 @@ class Index extends React.Component {
   }
 }
 let cartItems = {}
+const totalAmount = 2
 const addToCart = (id) => {
   if (cartItems[id])
     cartItems[id] += 1
   else
     cartItems[id] = 1
+}
+
+const getTotalAmount = (cartItems) => {
+  const itemQuantityArrayString =  Object.keys(cartItems).map((item) => cartItems[item]).join(',')
+  const itemQuantityArray = itemQuantityArrayString.split(',')
+  const requestOptions = {
+    mode: 'no-cors',
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: itemQuantityArrayString
+  };
+  console.log("parameters:"+ itemQuantityArrayString)
+  const response =  fetch('http://localhost:8081/eBookCart/getInvoice', requestOptions);
+    console.log("response"+response)
 }
 
 ReactDOM.render((
@@ -96,9 +110,11 @@ ReactDOM.render((
         addToCart={addToCart}
         products={PRODUCTS} />
       <Route path="/cart" component={Cart}
+       getTotalAmount={getTotalAmount}
       cartItems={cartItems} products={PRODUCTS}/>
     </Route>
     <Route path="/checkout" component={Checkout}
+      totalAmount={totalAmount}
       cartItems={cartItems} products={PRODUCTS}/>
   </Router>
 ), document.getElementById('content'))

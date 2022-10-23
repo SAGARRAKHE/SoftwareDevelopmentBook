@@ -17,7 +17,7 @@ class Checkout extends React.Component {
         </tr>
       })}
     </tbody></table><p>Item Count: {count}</p>
-    <p>Total: {0}</p></div>
+    <p>Total Amount: {this.props.route.totalAmount}</p></div>
   }
 }
 
