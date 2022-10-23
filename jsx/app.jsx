@@ -80,7 +80,7 @@ class Index extends React.Component {
   }
 }
 let cartItems = {}
-let totalAmount = 2
+let totalAmount = 0.0
 const addToCart = (id) => {
   if (cartItems[id])
     cartItems[id] += 1
